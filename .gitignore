@@ -5,6 +5,7 @@ code_snippets.json
 generation_log.txt
 nohup.out
 style_feature_info.json
+temp_code
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
