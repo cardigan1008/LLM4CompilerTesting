@@ -1,7 +1,16 @@
 from abc import ABC, abstractmethod
 from together import Together
 
-from functiongenerator.constants import MAX_TOKENS, MODEL_NAME, REPETITION_PENALTY, STOP, TEMPERATURE, TOP_K, TOP_P, LLMModel
+from functiongenerator.constants import (
+    MAX_TOKENS,
+    MODEL_NAME,
+    REPETITION_PENALTY,
+    STOP,
+    TEMPERATURE,
+    TOP_K,
+    TOP_P,
+    LLMModel,
+)
 
 
 class LLMClient(ABC):
@@ -9,10 +18,11 @@ class LLMClient(ABC):
     def create_chat_completion(self, messages, **kwargs):
         pass
 
+
 class TogetherAIClient(LLMClient):
     def __init__(self, api_key):
         self.client = Together(api_key=api_key)
-    
+
     def create_chat_completion(self, messages, **kwargs):
         """
         Create a chat completion with alternating roles in the conversation.
@@ -27,7 +37,7 @@ class TogetherAIClient(LLMClient):
             top_k (int): Top-k sampling parameter.
             repetition_penalty (float): Repetition penalty.
             stop (list): List of stopping sequences.
-        
+
         Returns:
             response: The LLM response.
         """
@@ -58,7 +68,8 @@ class TogetherAIClient(LLMClient):
         )
 
         return response
-    
+
+
 class LLMClientFactory:
     @staticmethod
     def create_client(client_type, api_key):

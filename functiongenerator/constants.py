@@ -6,8 +6,9 @@ import os
 class LLMModel(Enum):
     TOGETHER_AI = "together_ai"
 
+
 # Configuration for Together AI API
-MODEL_NAME = "codellama/CodeLlama-70b-Instruct-hf"
+MODEL_NAME = "codellama/CodeLlama-34b-Instruct-hf"
 MAX_TOKENS = 512
 TEMPERATURE = 0.7
 TOP_P = 0.7
@@ -16,7 +17,7 @@ REPETITION_PENALTY = 1
 STOP = ["</s>", "[INST]"]
 
 # Number of valid C functions to be generated
-NUM_FUNCTIONS = 1
+NUM_FUNCTIONS = 1000
 
 # Path to the directory where the results will be saved
 DIR_RESULTS = "results"
@@ -27,25 +28,25 @@ DIR_C_FILES = os.path.join(DIR_RESULTS, "generated_c_functions")
 DIR_LLM_RESPONSES = os.path.join(DIR_RESULTS, "llm_responses")
 
 
-
 # Prompt for the task of generating a C function
 PROMPT_GENERATE = (
-                    "Please generate a C function that has over 20 lines of code by adding the feature {feature} in a {style} style. "
-                    "Instructions: "
-                    "a. It takes only numeric input types and has a numeric return type. "
-                    "b. It dose not contain any other function calls, espeically I/O functions like printf or scanf. "
-                    "c. It is pure, meaning it has deterministic outputs and has no side effects. "
-                    "d. Please generate the code snippet that starts with ```C and ends with ```. "
-                    "e. Be creative! "
-                )
+    "Please generate a C function that has over 20 lines of code by adding the feature {feature} in a {style} style. "
+    "Instructions: "
+    "a. It takes only numeric input types and has a numeric return type. "
+    "b. It dose not contain any other function calls, espeically I/O functions like printf or scanf. "
+    "c. It is pure, meaning it has deterministic outputs and has no side effects. "
+    "d. Please generate the code snippet that starts with ```C and ends with ```. "
+    "e. Be creative! The function should use as many C language features as possible. "
+    "f. The name of function should be unique, which can be achieved by adding a random number at the end of the function name. "
+)
 
 # Prompt for the task of generating input pairs for a C function
 PROMPT_INPUT = (
-                    "For the provided function, please generate the input pairs that cover all the possible branches. "
-                    "Instructions: "
-                    "a. Wrap the input pairs in a list. For example: [[1], [2], [3]] "
-                    "b. Just give me the pairs without any explanation. "
-                )
+    "For the provided function, please generate the inputs that cover all the possible branches. "
+    "Instructions: "
+    "a. Wrap the each possible input in a list. For example: [input1], [input2], [input3]... "
+    "b. Make sure each possible input corresponds to the arguments of the function. For example, the number of inputs should match the number of arguments. "
+)
 
 # List of features that guide the generation of C functions
 FEATURES = [
@@ -246,4 +247,3 @@ STYLES = [
     "Testable",
     "Auditable",
 ]
-
