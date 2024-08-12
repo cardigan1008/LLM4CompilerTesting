@@ -7,7 +7,7 @@ class LLMModel(Enum):
     TOGETHER_AI = "together_ai"
 
 # Configuration for Together AI API
-MODEL_NAME = "codellama/CodeLlama-13b-Instruct-hf"
+MODEL_NAME = "codellama/CodeLlama-70b-Instruct-hf"
 MAX_TOKENS = 512
 TEMPERATURE = 0.7
 TOP_P = 0.7
