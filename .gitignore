@@ -1,3 +1,11 @@
+# result
+generated_c_files/
+llm_responses/
+code_snippets.json
+generation_log.txt
+nohup.out
+style_feature_info.json
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
