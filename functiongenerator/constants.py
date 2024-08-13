@@ -33,11 +33,11 @@ PROMPT_GENERATE = (
     "Please generate a C function that has over 20 lines of code by adding the feature {feature} in a {style} style. "
     "Instructions: "
     "a. It takes only numeric input types and has a numeric return type. "
-    "b. It dose not contain any other function calls, espeically I/O functions like printf or scanf. "
+    "b. It dose not contain any other function calls, espeically I/O functions like printf or scanf or random functions. "
     "c. It is pure, meaning it has deterministic outputs and has no side effects. "
     "d. Please generate the code snippet that starts with ```C and ends with ```. "
     "e. Be creative! The function should use as many C language features as possible. "
-    "f. The name of function should be unique, which can be achieved by adding a random number at the end of the function name. "
+    "f. The name of function should be unique, which can be achieved by including a number at the end of the function name. "
 )
 
 # Prompt for the task of generating input pairs for a C function
