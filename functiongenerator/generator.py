@@ -23,8 +23,11 @@ from utils.llm import LLMClientFactory
 from utils.utils import get_printf_format
 
 load_dotenv()
-api_key = os.environ.get("TOGETHER_API_KEY")
-client = LLMClientFactory.create_client(LLMModel.TOGETHER_AI, api_key=api_key)
+# api_key = os.environ.get("TOGETHER_API_KEY")
+# client = LLMClientFactory.create_client(LLMModel.TOGETHER_AI, api_key=api_key)
+
+api_key = os.environ.get("OPENAI_API_KEY")
+client = LLMClientFactory.create_client(LLMModel.OPEN_AI, api_key=api_key)
 
 os.makedirs(DIR_RESULTS, exist_ok=True)
 os.makedirs(DIR_C_FILES, exist_ok=True)

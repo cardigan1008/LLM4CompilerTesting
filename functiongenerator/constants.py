@@ -5,10 +5,14 @@ import os
 # Enum for different LLM models
 class LLMModel(Enum):
     TOGETHER_AI = "together_ai"
+    OPEN_AI = "open_ai"
 
 
-# Configuration for Together AI API
-MODEL_NAME = "codellama/CodeLlama-34b-Instruct-hf"
+# Configuration for API
+MODEL_NAME = {
+    LLMModel.TOGETHER_AI: "codellama/CodeLlama-34b-Instruct-hf",
+    LLMModel.OPEN_AI: "gpt-4o",
+}
 MAX_TOKENS = 512
 TEMPERATURE = 0.7
 TOP_P = 0.7
@@ -17,10 +21,10 @@ REPETITION_PENALTY = 1
 STOP = ["</s>", "[INST]"]
 
 # Number of valid C functions to be generated
-NUM_FUNCTIONS = 1000
+NUM_FUNCTIONS = 5
 
 # Path to the directory where the results will be saved
-DIR_RESULTS = "results"
+DIR_RESULTS = "results_openai"
 
 PATH_LOG_FILE = os.path.join(DIR_RESULTS, "generation_log.txt")
 PATH_JSON_FILE = os.path.join(DIR_RESULTS, "code_snippets.json")
@@ -30,7 +34,7 @@ DIR_LLM_RESPONSES = os.path.join(DIR_RESULTS, "llm_responses")
 
 # Prompt for the task of generating a C function
 PROMPT_GENERATE = (
-    "Please generate a C function that has over 20 lines of code by adding the feature {feature} in a {style} style. "
+    "Please generate a C function that has over 30 lines of code by adding the feature {feature} in a {style} style. "
     "Instructions: "
     "a. It takes only numeric input types and has a numeric return type. "
     "b. It dose not contain any other function calls, espeically I/O functions like printf or scanf or random functions. "

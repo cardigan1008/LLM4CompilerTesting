@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from openai import OpenAI
 from together import Together
 
 from functiongenerator.constants import (
@@ -41,7 +42,7 @@ class TogetherAIClient(LLMClient):
         Returns:
             response: The LLM response.
         """
-        model = kwargs.get("model", MODEL_NAME)
+        model = kwargs.get("model", MODEL_NAME[LLMModel.TOGETHER_AI])
         max_tokens = kwargs.get("max_tokens", MAX_TOKENS)
         temperature = kwargs.get("temperature", TEMPERATURE)
         top_p = kwargs.get("top_p", TOP_P)
@@ -68,6 +69,34 @@ class TogetherAIClient(LLMClient):
         )
 
         return response
+    
+
+class OpenAIClient(LLMClient):
+    def __init__(self, api_key):
+        self.client = OpenAI(api_key=api_key)
+        
+    def create_chat_completion(self, messages, **kwargs):
+        model = kwargs.get("model", MODEL_NAME[LLMModel.OPEN_AI])
+        max_tokens = kwargs.get("max_tokens", MAX_TOKENS)
+        temperature = kwargs.get("temperature", TEMPERATURE)
+        top_p = kwargs.get("top_p", TOP_P)
+        stop = kwargs.get("stop", STOP)
+
+        conversation = []
+        for i, msg in enumerate(messages):
+            role = "user" if i % 2 == 0 else "assistant"
+            conversation.append({"role": role, "content": msg})
+        
+        response = self.client.chat.completions.create(
+            model=model,
+            messages=conversation,
+            max_tokens=max_tokens,
+            temperature=temperature,
+            top_p=top_p,
+            stop=stop,
+        )
+    
+        return response
 
 
 class LLMClientFactory:
@@ -84,6 +113,8 @@ class LLMClientFactory:
             LLMClient: The LLM client.
         """
         if client_type.value == LLMModel.TOGETHER_AI.value:
-            return TogetherAIClient(api_key)
+            return TogetherAIClient(api_key)   
+        elif client_type.value == LLMModel.OPEN_AI.value:
+            return OpenAIClient(api_key)     
         else:
             raise ValueError(f"Invalid client type: {client_type}")
