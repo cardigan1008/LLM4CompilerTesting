@@ -21,12 +21,13 @@ REPETITION_PENALTY = 1
 STOP = ["</s>", "[INST]"]
 
 # Number of valid C functions to be generated
-NUM_FUNCTIONS = 5
+NUM_FUNCTIONS = 100
 
 # Path to the directory where the results will be saved
 DIR_RESULTS = "results_openai"
 
-PATH_LOG_FILE = os.path.join(DIR_RESULTS, "generation_log.txt")
+PATH_LOG_TIME_FILE = os.path.join(DIR_RESULTS, "generation_time_log.txt")
+PATH_LOG_FAILURE_FILE = os.path.join(DIR_RESULTS, "generation_failure_log.txt")
 PATH_JSON_FILE = os.path.join(DIR_RESULTS, "code_snippets.json")
 DIR_C_FILES = os.path.join(DIR_RESULTS, "generated_c_functions")
 DIR_LLM_RESPONSES = os.path.join(DIR_RESULTS, "llm_responses")
@@ -34,14 +35,13 @@ DIR_LLM_RESPONSES = os.path.join(DIR_RESULTS, "llm_responses")
 
 # Prompt for the task of generating a C function
 PROMPT_GENERATE = (
-    "Please generate a C function that has over 30 lines of code by adding the feature {feature} in a {style} style. "
+    "Please generate a C function that has over 50 lines of code by adding the feature {feature} in a {style} style. "
     "Instructions: "
     "a. It takes only numeric input types and has a numeric return type. "
-    "b. It dose not contain any other function calls, espeically I/O functions like printf or scanf or random functions. "
+    "b. It dose not contain any other function calls. "
     "c. It is pure, meaning it has deterministic outputs and has no side effects. "
-    "d. Please generate the code snippet that starts with ```C and ends with ```. "
-    "e. Be creative! The function should use as many C language features as possible. "
-    "f. The name of function should be unique, which can be achieved by including a number at the end of the function name. "
+    "d. Be creative! The function should use as many C language features as possible. "
+    "e. Please only include the function definition and not the main function without any explanation. "
 )
 
 # Prompt for the task of generating input pairs for a C function
