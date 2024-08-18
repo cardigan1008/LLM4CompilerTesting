@@ -5,6 +5,7 @@ from together import Together
 from functiongenerator.constants import (
     MAX_TOKENS,
     MODEL_NAME,
+    PROMPT_ROLE,
     REPETITION_PENALTY,
     STOP,
     TEMPERATURE,
@@ -51,7 +52,7 @@ class TogetherAIClient(LLMClient):
         stop = kwargs.get("stop", STOP)
 
         # Initialize the conversation with alternating roles
-        conversation = []
+        conversation = [{"role": "system", "content": PROMPT_ROLE}]
         for i, msg in enumerate(messages):
             role = "user" if i % 2 == 0 else "assistant"
             conversation.append({"role": role, "content": msg})

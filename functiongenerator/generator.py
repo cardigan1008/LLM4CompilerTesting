@@ -26,6 +26,9 @@ load_dotenv()
 # api_key = os.environ.get("TOGETHER_API_KEY")
 # client = LLMClientFactory.create_client(LLMModel.TOGETHER_AI, api_key=api_key)
 
+os.environ["http_proxy"] = "http://127.0.0.1:7890"
+os.environ["https_proxy"] = "http://127.0.0.1:7890"
+
 api_key = os.environ.get("OPENAI_API_KEY")
 client = LLMClientFactory.create_client(LLMModel.OPEN_AI, api_key=api_key)
 
@@ -55,7 +58,7 @@ while valid_snippet_count < NUM_FUNCTIONS:
     response = client.create_chat_completion([generation_query])
 
     generation_res = response.choices[0].message.content
-    pattern = r"```(?:C)?(.*?)```"
+    pattern = r"```(?:[Cc])?(.*?)```"
     match = re.search(pattern, generation_res, re.DOTALL)
 
     print("generation response:" + generation_res)
@@ -85,7 +88,7 @@ while valid_snippet_count < NUM_FUNCTIONS:
 
         if compile_result.returncode == 0:
             function_signature = re.search(
-                r"(unsigned\s+)?(int|float|double|char|short|long\s+long|long|int8_t|uint8_t|int16_t|uint16_t|int32_t|uint32_t|int64_t|uint64_t|size_t|ptrdiff_t)\s+(\w+)\s*\((.*?)\)",
+                r"(unsigned\s+)?(int|char|short|long\s+long|long)\s+(\w+)\s*\((.*?)\)",
                 code_snippet,
             )
 
