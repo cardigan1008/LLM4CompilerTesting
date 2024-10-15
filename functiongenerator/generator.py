@@ -9,6 +9,7 @@ from dotenv import load_dotenv
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
+from functiongenerator.validator import Validator
 from templates import Templates
 from constants import (
     NUM_FUNCTIONS,
@@ -54,7 +55,7 @@ code_snippets = []
 previous_time = time.time()
 
 while valid_snippet_count < NUM_FUNCTIONS:
-    generation_query = Templates.format("Generate")
+    generation_query = Templates.format("CodeSnippet", code_snippet="")
     response = client.create_chat_completion([generation_query])
 
     generation_res = response.choices[0].message.content
@@ -79,42 +80,11 @@ while valid_snippet_count < NUM_FUNCTIONS:
             f.write("    return 0;\n")
             f.write("}\n")
 
-        # Use gcc to compile the code to check whether it is compilable
-        compile_result = subprocess.run(
-            ["gcc", "-o", "temp_code", c_file_path],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-        )
+        if Validator.is_compilable(c_file_path):
+            function_data = Validator.extract_function_signature(code_snippet)
+            if function_data:
+                code_snippets.append(function_data)
 
-        if compile_result.returncode == 0:
-            function_signature = re.search(
-                r"(unsigned\s+)?(int|char|short|long\s+long|long)\s+(\w+)\s*\((.*?)\)",
-                code_snippet,
-            )
-
-            if function_signature:
-                return_type = function_signature.group(2)
-                function_name = function_signature.group(3)
-                parameter_list = function_signature.group(4)
-
-                parameter_types = (
-                    [
-                        param.strip().split(" ")[0]
-                        for param in parameter_list.split(",")
-                    ]
-                    if parameter_list
-                    else []
-                )
-
-                snippet_data = {
-                        "function_name": function_name,
-                        "parameter_types": parameter_types,
-                        "return_type": return_type,
-                        "function": code_snippet,
-                    }
-                code_snippets.append(snippet_data)
-     
-                # Delete and replace the .c file without the main function
                 os.remove(c_file_path)
                 with open(c_file_path, "w") as f:
                     f.write(code_snippet)
@@ -130,11 +100,10 @@ while valid_snippet_count < NUM_FUNCTIONS:
 
                 with open(PATH_JSON_FILE, "r+") as outfile:
                     data = json.load(outfile)
-                    data.append(snippet_data)
+                    data.append(function_data)
                     outfile.seek(0)
                     json.dump(data, outfile, indent=4)
 
-                # Save the LLM response and input to a file
                 llm_response_path = os.path.join(
                     DIR_LLM_RESPONSES, f"{c_file_name}_llm_response.txt"
                 )
@@ -145,13 +114,9 @@ while valid_snippet_count < NUM_FUNCTIONS:
                     llm_file.write(generation_res + "\n\n")
             else:
                 invalid_snippet_count += 1
-                unsupported_signature = function_signature.group(0) if function_signature else "Unknown"
                 with open(PATH_LOG_FAILURE_FILE, "a") as log_file:
-                    log_file.write(f"func{invalid_snippet_count}: Function return type not supported: {unsupported_signature}\n")
+                    log_file.write(f"func{invalid_snippet_count}: Function signature not supported\n")
         else:
             invalid_snippet_count += 1
             with open(PATH_LOG_FAILURE_FILE, "a") as log_file:
                 log_file.write(f"func{invalid_snippet_count}: Compilation failed\n")
-
-        if os.path.exists("temp_code"):
-            os.remove("temp_code")

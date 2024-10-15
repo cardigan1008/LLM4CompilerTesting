@@ -39,6 +39,15 @@ PROMPT_ROLE = (
     "So make sure the functions are rich in C features and complexity to trigger interesting compiler internal behaviors like optimizations. "
 )
 
+PROMPT_CODE = (
+    "Convert the given C program to one C function that takes integer inputs and return a integer: "
+    "```c\n"
+    "{code_snippet}\n"
+    "```"
+    "Instructions: "
+    "a. Give the code without any explanation."
+)
+
 # Prompt for the task of generating a C function
 PROMPT_GENERATE = (
     "Please generate a C function that has over 30 lines of code by adding the feature {feature} in a {style} style. "
