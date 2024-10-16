@@ -1,3 +1,8 @@
+import json
+import os
+import random
+
+
 def get_printf_format(return_type):
     """
     Returns the correct printf format specifier based on the return type.
@@ -30,3 +35,32 @@ def get_printf_format(return_type):
         return "%c"  # Unsigned character format
     else:
         raise ValueError(f"Unsupported return type: {return_type}")
+
+def extract_random_function_from_batches(batch_dir):
+    """
+    Randomly selects and returns one function from multiple JSON batch files.
+
+    Parameters:
+        batch_dir (str): The directory containing the batch JSON files.
+
+    Returns:
+        dict: A dictionary representing a randomly selected function.
+    """
+    # List all JSON batch files in the directory
+    batch_files = [f for f in os.listdir(batch_dir) if f.endswith('.json')]
+    
+    if not batch_files:
+        raise ValueError("No batch files found in the specified directory.")
+
+    # Randomly select one batch file
+    random_batch_file = random.choice(batch_files)
+    random_batch_path = os.path.join(batch_dir, random_batch_file)
+    
+    # Load the selected batch file
+    with open(random_batch_path, "r", encoding="utf-8") as batch_json:
+        functions = json.load(batch_json)
+    
+    # Randomly select one function from the batch
+    random_function = random.choice(functions)
+    
+    return random_function

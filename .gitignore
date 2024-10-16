@@ -3,6 +3,7 @@ results*/
 eval/
 temp_code
 AnghaBench/
+batches/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

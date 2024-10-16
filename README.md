@@ -38,6 +38,17 @@ Ensure you have Python 3.10 installed. Install the required dependencies using p
 pip install -r requirements.txt
 ```
 
+### Step 4: Extract the Dataset into batches
+
+For example, if you are planning to use AnghaBench that has over 100M functions as the dataset, clone the AnghaBench repository and extract the functions into batches. 
+
+```bash
+git clone https://github.com/brenocfg/AnghaBench.git
+python3 scripts/extract_functions.py --input_dir AnghaBench --output_dir batches --batch_size 10000
+```
+
+You can change the output directory DIR_ANGHA_BATCHES in functiongenerator/constants.py, whose default value is 'batches'. The default batch size is 10000.
+
 ## Running the Project
 
 To start generating and testing functions with the LLM:

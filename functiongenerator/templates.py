@@ -24,7 +24,7 @@ class CodeTemplate(BaseTemplate):
     def format(self, **kwargs):
         if "code_snippet" in kwargs:
             self.code_snippet = kwargs["code_snippet"]
-        return f"{super().template.format(**kwargs)}\n\nCode Snippet:\n{self.code_snippet}"
+        return self.template.format(code_snippet=self.code_snippet)
 
 
 class Templates:

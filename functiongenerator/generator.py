@@ -1,7 +1,6 @@
 import json
 import os
 import re
-import subprocess
 import sys
 import time
 
@@ -12,6 +11,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from functiongenerator.validator import Validator
 from templates import Templates
 from constants import (
+    DIR_ANGHA_BATCHES,
     NUM_FUNCTIONS,
     PATH_LOG_FAILURE_FILE,
     PATH_LOG_TIME_FILE,
@@ -22,13 +22,17 @@ from constants import (
     LLMModel,
 )
 from utils.llm import LLMClientFactory
+from utils.utils import extract_random_function_from_batches
 
 load_dotenv()
-# api_key = os.environ.get("TOGETHER_API_KEY")
-# client = LLMClientFactory.create_client(LLMModel.TOGETHER_AI, api_key=api_key)
 
+os.environ['all_proxy'] = ''
+os.environ['ALL_PROXY'] = ''
 os.environ["http_proxy"] = "http://127.0.0.1:7890"
 os.environ["https_proxy"] = "http://127.0.0.1:7890"
+
+# api_key = os.environ.get("TOGETHER_API_KEY")
+# client = LLMClientFactory.create_client(LLMModel.TOGETHER_AI, api_key=api_key)
 
 api_key = os.environ.get("OPENAI_API_KEY")
 client = LLMClientFactory.create_client(LLMModel.OPEN_AI, api_key=api_key)
@@ -55,7 +59,8 @@ code_snippets = []
 previous_time = time.time()
 
 while valid_snippet_count < NUM_FUNCTIONS:
-    generation_query = Templates.format("CodeSnippet", code_snippet="")
+    angha_function = extract_random_function_from_batches(DIR_ANGHA_BATCHES)["content"]
+    generation_query = Templates.format("CodeSnippet", code_snippet=angha_function)
     response = client.create_chat_completion([generation_query])
 
     generation_res = response.choices[0].message.content

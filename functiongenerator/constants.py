@@ -21,10 +21,12 @@ REPETITION_PENALTY = 1
 STOP = ["</s>", "[INST]"]
 
 # Number of valid C functions to be generated
-NUM_FUNCTIONS = 10000
+NUM_FUNCTIONS = 100
+
+DIR_ANGHA_BATCHES="batches"
 
 # Path to the directory where the results will be saved
-DIR_RESULTS = "results_openai"
+DIR_RESULTS = "results_openai_test_2"
 
 PATH_LOG_TIME_FILE = os.path.join(DIR_RESULTS, "generation_time_log.txt")
 PATH_LOG_FAILURE_FILE = os.path.join(DIR_RESULTS, "generation_failure_log.txt")
@@ -40,12 +42,67 @@ PROMPT_ROLE = (
 )
 
 PROMPT_CODE = (
-    "Convert the given C program to one C function that takes integer inputs and return a integer: "
+    "Convert the given C program to one C function that takes integer inputs and returns an integer: "
     "```c\n"
     "{code_snippet}\n"
     "```"
     "Instructions: "
-    "a. Give the code without any explanation."
+    "a. It does not contain any other function calls. "
+    "b. It is pure, meaning it has deterministic outputs and has no side effects. "
+    "c. It takes only numeric input types and has a numeric return type. "
+    "Note: "
+    "a. When we say numeric, we mean int, long, long long, short, char, unsigned int, unsigned long, unsigned long long, unsigned short, unsigned char. "
+    "b. Please only generate one function at a time without any explanation. You are not allowed to generate more than one function at a time. "
+    "c. You can keep the used struct definitions and global variables as they are. But make sure input and output types are numeric. "
+    "Example: "
+    """-------------------Original-------------------
+    #define NULL ((void*)0)
+    typedef unsigned long size_t;  // Customize by platform.
+    typedef long intptr_t; typedef unsigned long uintptr_t;
+    typedef long scalar_t__;  // Either arithmetic or pointer type.
+    /* By default, we understand bool (as a convenience). */
+    typedef int bool;
+    #define false 0
+    #define true 1
+
+    /* Forward declarations */
+    typedef  struct TYPE_4__   TYPE_1__ ;
+
+    /* Type definitions */
+    struct TYPE_4__ {scalar_t__ nalloc; scalar_t__ len; char* body; } ;
+    typedef  TYPE_1__ Buffer ;
+
+    /* Variables and functions */
+    int realloc_body(TYPE_1__*) ;
+
+    void buf_write(Buffer *b, char c) {
+        if (b->nalloc == (b->len + 1))
+            realloc_body(b);
+        b->body[b->len++] = c;
+    }
+    -------------------Transformed-------------------
+    #include <stdlib.h>
+
+    typedef struct {
+        size_t nalloc;
+        size_t len;
+        char *body;
+    } Buffer;
+
+    int buf_write(int nalloc, int len, char *body, char c) {
+        Buffer b;
+        b.nalloc = nalloc;
+        b.len = len;
+        b.body = body;
+
+        if (b.nalloc == (b.len + 1)) {
+            b.nalloc *= 2; // Example realloc for demonstration
+            b.body = realloc(b.body, b.nalloc);
+        }
+
+        b.body[b.len++] = c;
+        return b.len; // Return the new length
+    }"""
 )
 
 # Prompt for the task of generating a C function
