@@ -26,7 +26,7 @@ from constants import (
 from utils.llm import LLMClientFactory
 from utils.utils import extract_random_function_from_batches
 
-DEBUG = True
+DEBUG = False
 
 load_dotenv()
 
