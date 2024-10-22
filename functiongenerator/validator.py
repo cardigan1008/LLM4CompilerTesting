@@ -56,3 +56,20 @@ class Validator:
                 "function": code_snippet,
             }
         return None
+
+    @staticmethod
+    def remove_comments(code_snippet):
+        """
+        Remove comments and empty lines from the given C code snippet.
+        """
+        code_without_comments = re.sub(r"//.*?$|/\*.*?\*/", "", code_snippet, flags=re.DOTALL | re.MULTILINE)
+        lines = [line.strip() for line in code_without_comments.splitlines() if line.strip()]
+        return lines
+
+    @staticmethod
+    def has_minimum_lines(code_snippet, min_lines=5):
+        """
+        Check if the given C code snippet has at least the specified number of non-empty lines after removing comments.
+        """
+        lines = Validator.remove_comments(code_snippet)
+        return len(lines) >= min_lines

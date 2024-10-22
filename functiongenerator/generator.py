@@ -73,6 +73,12 @@ while valid_snippet_count < NUM_FUNCTIONS:
         code_snippet = match.group(1).strip()
         if "scanf" in code_snippet or "printf" in code_snippet:
             continue
+            
+        if not Validator.has_minimum_lines(code_snippet):
+            invalid_snippet_count += 1
+            with open(PATH_LOG_FAILURE_FILE, "a") as log_file:
+                log_file.write(f"func{invalid_snippet_count}: Too few lines after removing comments\n")
+            continue
 
         c_file_name = f"{valid_snippet_count + 1:05d}.c"
         c_file_path = os.path.join(DIR_C_FILES, c_file_name)
