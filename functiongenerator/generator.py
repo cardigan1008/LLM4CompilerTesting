@@ -13,16 +13,20 @@ from templates import Templates
 from constants import (
     DIR_ANGHA_BATCHES,
     NUM_FUNCTIONS,
+    PATH_LOG_COMPLILATION_FAILED_FUNCTIONS,
     PATH_LOG_FAILURE_FILE,
     PATH_LOG_TIME_FILE,
     PATH_JSON_FILE,
     DIR_RESULTS,
     DIR_C_FILES,
     DIR_LLM_RESPONSES,
+    PATH_LOG_UNSUPPORTED_SIGS_FUNCTIONS,
     LLMModel,
 )
 from utils.llm import LLMClientFactory
 from utils.utils import extract_random_function_from_batches
+
+DEBUG = True
 
 load_dotenv()
 
@@ -72,6 +76,9 @@ while valid_snippet_count < NUM_FUNCTIONS:
     if match:
         code_snippet = match.group(1).strip()
         if "scanf" in code_snippet or "printf" in code_snippet:
+            invalid_snippet_count += 1
+            with open(PATH_LOG_FAILURE_FILE, "a") as log_file:
+                log_file.write(f"func{invalid_snippet_count}: Contains scanf or printf\n")
             continue
             
         if not Validator.has_minimum_lines(code_snippet):
@@ -125,9 +132,15 @@ while valid_snippet_count < NUM_FUNCTIONS:
                     llm_file.write(generation_res + "\n\n")
             else:
                 invalid_snippet_count += 1
+                if DEBUG:
+                    with open(PATH_LOG_UNSUPPORTED_SIGS_FUNCTIONS, "a") as log_file:
+                        log_file.write(f"Unsupported signature:\n {code_snippet}\n")
                 with open(PATH_LOG_FAILURE_FILE, "a") as log_file:
                     log_file.write(f"func{invalid_snippet_count}: Function signature not supported\n")
         else:
             invalid_snippet_count += 1
+            if DEBUG:
+                with open(PATH_LOG_COMPLILATION_FAILED_FUNCTIONS, "a") as log_file:
+                    log_file.write(f"Compilation failed:\n {code_snippet}\n")
             with open(PATH_LOG_FAILURE_FILE, "a") as log_file:
                 log_file.write(f"func{invalid_snippet_count}: Compilation failed\n")

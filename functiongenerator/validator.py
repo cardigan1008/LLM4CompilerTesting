@@ -25,27 +25,36 @@ class Validator:
         Extract the function signature from the given C code snippet.
         Returns a dictionary with return type, function name, and parameter types if valid, or None if not.
         """
-        # Expanded pattern to include more primitive types and optional signed/unsigned
-        pattern = r"(unsigned\s+|signed\s+)?(void|int|char|short|long\s+long|long|float|double)\s+(\w+)\s*\((.*?)\)"
-        match = re.search(pattern, code_snippet)
-        if match:
-            return_type = match.group(2)
-            function_name = match.group(3)
-            parameter_list = match.group(4)
 
-            # Extract parameter types, excluding complex types like structs
+        pattern = (
+            r"(const\s+)?(unsigned\s+|signed\s+)?"
+            r"(void|int|char|short|long\s+long|long|float|double|"
+            r"size_t|uint\d+_t|int\d+_t|bool|double)\s+(\w+)\s*\((.*?)\)"
+        )
+        match = re.search(pattern, code_snippet, flags=re.DOTALL | re.MULTILINE)
+
+        if match:
+            return_type = f"{match.group(1) or ''}{match.group(2) or ''}{match.group(3)}".strip()
+            function_name = match.group(4)
+            parameter_list = match.group(5).strip()
+
             if parameter_list:
                 parameter_types = [param.strip() for param in parameter_list.split(",")]
 
-                # Check if any parameter contains 'struct' or other non-primitive types
                 for param in parameter_types:
-                    # Allow only primitive types in the parameter list
-                    if "struct" in param or not re.match(r"(unsigned\s+|signed\s+)?(void|int|char|short|long\s+long|long|float|double)", param):
+                    if (
+                        "struct" in param or "union" in param or 
+                        not re.match(r"(const\s+)?(unsigned\s+|signed\s+)?"
+                                     r"(void|int|char|short|long\s+long|long|float|double|"
+                                     r"size_t|uint\d+_t|int\d+_t|bool)(\s*\*?\s*)?", param)
+                    ):
                         return None
 
-                # Only extract primitive types, ignoring variable names
-                parameter_types = [param.split(" ")[-2:] if "unsigned" in param or "signed" in param else param.split(" ")[0] for param in parameter_types]
-
+                parameter_types = [
+                    " ".join(param.split()[:-1])
+                    if len(param.split()) > 1 else param
+                    for param in parameter_types
+                ]
             else:
                 parameter_types = []
 

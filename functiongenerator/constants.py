@@ -30,6 +30,8 @@ DIR_RESULTS = "results/results_openai_new"
 
 PATH_LOG_TIME_FILE = os.path.join(DIR_RESULTS, "generation_time_log.txt")
 PATH_LOG_FAILURE_FILE = os.path.join(DIR_RESULTS, "generation_failure_log.txt")
+PATH_LOG_UNSUPPORTED_SIGS_FUNCTIONS = os.path.join(DIR_RESULTS, "unsupported_signatures_functions.txt")
+PATH_LOG_COMPLILATION_FAILED_FUNCTIONS = os.path.join(DIR_RESULTS, "compilation_failed_functions.txt")
 PATH_JSON_FILE = os.path.join(DIR_RESULTS, "code_snippets.json")
 DIR_C_FILES = os.path.join(DIR_RESULTS, "generated_c_functions")
 DIR_LLM_RESPONSES = os.path.join(DIR_RESULTS, "llm_responses")
@@ -51,9 +53,14 @@ PROMPT_CODE = (
     "b. It is pure, meaning it has deterministic outputs and has no side effects. "
     "c. It takes only numeric input types and has a numeric return type. "
     "Note: "
-    "a. When we say numeric, we mean int, long, long long, short, char, unsigned int, unsigned long, unsigned long long, unsigned short, unsigned char. "
-    "b. Please only generate one function at a time without any explanation. You are not allowed to generate more than one function at a time. "
-    "c. You can only keep necessary struct definitions and global variables used in the function. Remove all other unnecessary struct definitions and global variables. "
+    "a. It must only use primitive types (e.g., int, float, double) and standard library-defined numeric types (e.g., size_t, uint32_t). "
+    "   Custom types such as struct, union, or typedefs are not allowed. "
+    "b. You must generate only **one function** without any explanation. If the original code requires multiple functions, "
+    "   you should inline the logic of those functions into a single function. Generating multiple functions is not allowed. "
+    "c. Retain only the struct definitions and global variables that are essential for the function's operation. "
+    "   Any unused or redundant structs and global variables should be removed. If you encounter typedefs that only alias primitive or standard library types "
+    "   (e.g., typedef unsigned long ULONG;), replace them with the original type and remove the typedef definition. "
+    "d. Ensure that the function is fully compilable and free from syntax errors. It should adhere to C language standards. "
     "Below is an example of conversion. To avoid redundancy, please ensure your proposed function is distinct from the transformed function and avoid generating the same function: "
     """-------------------Original-------------------
     #define NULL ((void*)0)
