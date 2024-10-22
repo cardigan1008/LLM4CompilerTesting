@@ -30,10 +30,11 @@ DEBUG = False
 
 load_dotenv()
 
-os.environ['all_proxy'] = ''
-os.environ['ALL_PROXY'] = ''
-os.environ["http_proxy"] = "http://127.0.0.1:7890"
-os.environ["https_proxy"] = "http://127.0.0.1:7890"
+# For users who are behind a proxy, please set the proxy in the environment variables
+# os.environ['all_proxy'] = ''
+# os.environ['ALL_PROXY'] = ''
+# os.environ["http_proxy"] = "http://127.0.0.1:7890"
+# os.environ["https_proxy"] = "http://127.0.0.1:7890"
 
 # api_key = os.environ.get("TOGETHER_API_KEY")
 # client = LLMClientFactory.create_client(LLMModel.TOGETHER_AI, api_key=api_key)
