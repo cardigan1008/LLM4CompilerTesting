@@ -20,8 +20,9 @@ def calculate_statistics(times):
     min_time = min(times)
     median_time = statistics.median(times)
     mean_time = statistics.mean(times)
+    total_time = sum(times)
     
-    return max_time, min_time, median_time, mean_time
+    return max_time, min_time, median_time, mean_time, total_time
 
 def main(file_path):
     times = extract_times(file_path)
@@ -30,12 +31,13 @@ def main(file_path):
         print("No valid time data found.")
         return
     
-    max_time, min_time, median_time, mean_time = calculate_statistics(times)
+    max_time, min_time, median_time, mean_time, total_time = calculate_statistics(times)
     
     print(f"Max Time: {max_time:.6f} s")
     print(f"Min Time: {min_time:.6f} s")
     print(f"Median Time: {median_time:.6f} s")
     print(f"Mean Time: {mean_time:.6f} s")
+    print(f"Total Time: {total_time:.6f} s")
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
