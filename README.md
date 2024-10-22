@@ -7,7 +7,7 @@ Using Large Language Models (LLMs) to conduct compiler testing.
 ### Step 1: Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/LLM4CompilerTesting.git
+git clone https://github.com/cardigan1008/LLM4CompilerTesting.git
 cd LLM4CompilerTesting
 ```
 
